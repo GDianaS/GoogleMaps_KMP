@@ -88,6 +88,7 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
+// Definindo os arquivos onde estão as variáveis secretas
 secrets {
     propertiesFileName = "secrets.properties"
     defaultPropertiesFileName = "local.defaults.properties"

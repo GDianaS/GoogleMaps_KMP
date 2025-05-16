@@ -13,6 +13,7 @@ import com.google.maps.android.compose.rememberMarkerState
 
 @Composable
 actual fun MapComponent() {
+    // Criando um mapa
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {

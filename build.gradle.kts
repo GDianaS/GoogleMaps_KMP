@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
 }
 
+// Adicionar a dependência de Secrets Gradle
 buildscript {
     dependencies {
         classpath(libs.maps.secrets.gradle.plugin)

@@ -1,14 +1,58 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Integração do Google Maps em Projeto KMP (Kotlin Multiplatform)
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+Este guia descreve os passos necessários para integrar o Google Maps em um projeto Kotlin Multiplatform, garantindo compatibilidade com Android e iOS.
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+---
 
+## 1. Adicionar dependências no `libs.versions.toml`
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+Inclua as bibliotecas necessárias no arquivo `libs.versions.toml`, conforme exigido para o suporte ao Google Maps e ao Compose Multiplatform.
+
+---
+
+## 2. Criar a função `expect` para o componente de mapa
+
+No módulo `commonMain`, crie o arquivo `MapComponent.kt` com a seguinte definição:
+
+```kotlin
+@Composable
+expect fun MapComponent()
+```
+
+Devido à natureza da função expect, será necessário implementar a função actual separadamente para cada plataforma:
+
+- androidMain/MapComponent.kt
+- iosMain/MapComponent.kt
+
+---
+
+## 3. Configuração do lado Android
+### 3.1 Adicionar dependência no `composeApp/build.gradle.kts`:
+
+```kotlin
+plugins {
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+}
+```
+
+```kotlin
+ androidMain.dependencies {
+    implementation(compose.preview)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.google.maps)
+}
+```
+### 3.2 Adicionar a chave da API no `AndroidManifest.xml` dentro da tag <application>:
+
+```kotlin
+<meta-data
+android:name="com.google.android.geo.API_KEY"
+android:value="${MAPS_API_KEY}" />
+```
+
+---
+
