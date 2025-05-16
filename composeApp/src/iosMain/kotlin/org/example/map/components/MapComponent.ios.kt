@@ -12,6 +12,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 @OptIn(ExperimentalForeignApi::class)
 @Composable
 actual fun MapComponent() {
+    // Componente de Map do lado do iOS
     UIKitViewController(
         factory = mapViewController,
         modifier = Modifier.fillMaxSize(),

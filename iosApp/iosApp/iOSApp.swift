@@ -1,5 +1,6 @@
 import SwiftUI
 
+// Configurando a chave da api
 @main
 struct iOSApp: App {
     init() {

@@ -3,6 +3,7 @@ import SwiftUI
 import ComposeApp
 import GoogleMaps
 
+// Criando um Map com um marcador inicial
 struct GoogleMapView: UIViewRepresentable {
     func makeUIView(context: Context) -> GMSMapView {
         let options = GMSMapViewOptions()

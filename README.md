@@ -2,6 +2,7 @@
 
 Este guia descreve os passos necessários para integrar o Google Maps em um projeto Kotlin Multiplatform, garantindo compatibilidade com Android e iOS.
 
+Baseado em: [link github](https://github.com/areebmomin/Google-Maps-CMP/tree/main/iosApp/iosApp)
 ---
 
 ## 1. Adicionar dependências no `libs.versions.toml`
@@ -12,7 +13,7 @@ Inclua as bibliotecas necessárias no arquivo `libs.versions.toml`, conforme exi
 
 ## 2. Criar a função `expect` para o componente de mapa
 
-No módulo `commonMain`, crie o arquivo `MapComponent.kt` com a seguinte definição:
+No módulo `commonMain`, crie o arquivo `MapComponent.android.kt` com a seguinte definição:
 
 ```kotlin
 @Composable
@@ -21,8 +22,8 @@ expect fun MapComponent()
 
 Devido à natureza da função expect, será necessário implementar a função actual separadamente para cada plataforma:
 
-- androidMain/MapComponent.kt
-- iosMain/MapComponent.kt
+- androidMain/MapComponent.android.kt
+- iosMain/MapComponent.ios.kt
 
 ---
 
@@ -55,4 +56,54 @@ android:value="${MAPS_API_KEY}" />
 ```
 
 ---
+
+## 4. Configuração do lado Ios
+### 4.1. Adicionar MapViewController em `composabeApp/iosMain/MainViewController.kt`:
+
+```kotlin
+fun MainViewController(
+    mapUIViewController: () -> UIViewController
+) = ComposeUIViewController {
+    mapViewController = mapUIViewController
+    App()
+}
+
+lateinit var mapViewController: () -> UIViewController
+```
+
+### 4.2. Implementar a função actual composable em para o lado iOS:
+No módulo `iosMain`, crie o arquivo `MapComponent.ios.kt`
+
+```kotlin
+@OptIn(ExperimentalForeignApi::class)
+@Composable
+actual fun MapComponent() {
+    UIKitViewController(
+        factory = mapViewController,
+        modifier = Modifier.fillMaxSize(),
+    )
+}
+```
+
+### 4.3. Adicionar a chave da API no `iosApp/iOSApp.swift`:
+
+```swift
+import SwiftUI
+import GoogleMaps
+
+@main
+struct iOSApp: App {
+    init() {
+        GMSServices.provideAPIKey("YOUR_API_KEY")
+    }
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
+```
+
+
 
