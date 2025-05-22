@@ -2,18 +2,31 @@
 
 Este guia descreve os passos necessários para integrar o Google Maps em um projeto Kotlin Multiplatform, garantindo compatibilidade com Android e iOS.
 
-Baseado em: [link github](https://github.com/areebmomin/Google-Maps-CMP/tree/main/iosApp/iosApp)
+Baseado em: [link github](https://github.com/areebmomin/Google-Maps-CMP/tree/main)
 ---
 
 ## 1. Adicionar dependências no `libs.versions.toml`
 
 Inclua as bibliotecas necessárias no arquivo `libs.versions.toml`, conforme exigido para o suporte ao Google Maps e ao Compose Multiplatform.
 
+```kotlin
+[versions]
+#Google Maps
+androidx-google-maps = "6.1.0"
+secretsGradlePlugin = "2.0.1"
+
+[libraries]
+#Google Maps
+        androidx-google-maps = { module = "com.google.maps.android:maps-compose", version.ref = "androidx-google-maps" }
+maps-secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
+
+```
+
 ---
 
 ## 2. Criar a função `expect` para o componente de mapa
 
-No módulo `commonMain`, crie o arquivo `MapComponent.android.kt` com a seguinte definição:
+No módulo `commonMain` em `composeApp/src/commonMain/kotlin/../components` , crie o arquivo `MapComponent.kt` com a seguinte definição:
 
 ```kotlin
 @Composable
@@ -22,8 +35,8 @@ expect fun MapComponent()
 
 Devido à natureza da função expect, será necessário implementar a função actual separadamente para cada plataforma:
 
-- androidMain/MapComponent.android.kt
-- iosMain/MapComponent.ios.kt
+- androidMain/../components/MapComponent.android.kt
+- iosMain/../components/MapComponent.ios.kt
 
 ---
 
@@ -53,6 +66,35 @@ plugins {
 <meta-data
 android:name="com.google.android.geo.API_KEY"
 android:value="${MAPS_API_KEY}" />
+```
+
+### 3.3. Implementar a função actual composable em para o lado Android:
+No módulo `iosAndroid`, crie o arquivo `MapComponent.android.kt`
+
+```kotlin
+@Composable
+actual fun MapComponent() {
+    // Criando um mapa
+    Box(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        val coordinates = LatLng(19.068857, 72.833)
+        val markerState = rememberMarkerState(position = coordinates)
+        val cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(coordinates, 10f)
+        }
+        GoogleMap(
+            modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState
+        ) {
+            Marker(
+                state = markerState,
+                title = "Bandra West",
+                snippet = "Mumbai"
+            )
+        }
+    }
+}
 ```
 
 ---
